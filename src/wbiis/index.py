@@ -14,15 +14,18 @@ class Entry:
     """
     Wavelet features index entry
     """
-    def __init__(self, path='', wc1_16=None, std_dev_wc1_8=None, l5_wc1_8=None):
+    def __init__(self, path='', wc=None, sigma_c=None, l5_wc=None):
         """
         :param path: The image path
-        :param wc1_16: 16x16 4-layer 2-D fast wavelet transform submatrices
-        :param std_dev_wc1_8: 8x􏰊8 corner submatrices standard deviations
-        :param l5_wc1_8: 8x8 5-level 2-D fast wavelet transform
+        :param wc: 16x16 4-layer 2-D fast wavelet transform submatrices
+        :param sigma_c: 8x􏰊8 corner submatrices standard deviations
+        :param l5_wc: 8x8 5-level 2-D fast wavelet transform
         """
 
         self.path = path
-        self.wc1_16 = wc1_16
-        self.std_devWc1_8 = std_dev_wc1_8
-        self.l5_wc1_8 = l5_wc1_8
+        self.wc = wc
+        self.sigma_c = sigma_c
+        self.l5_wc = l5_wc
+
+    def __repr__(self):
+        return 'Entry(path={0}, sigma_c={1})'.format(self.path, self.sigma_c)

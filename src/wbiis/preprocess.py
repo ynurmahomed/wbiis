@@ -62,8 +62,8 @@ def build_index(folder, wavelet, level):
             continue
 
         img = cv2.imread(path)
-        w_c, sigma_c, l5_wc = get_wavelet_features(img, wavelet, level)
-        entry = Entry(path, w_c, sigma_c, l5_wc)
+        wc, sigma_c, l5_wc = get_wavelet_features(img, wavelet, level)
+        entry = Entry(path, wc, sigma_c, l5_wc)
         index.entries.append(entry)
 
     with open(os.path.join(folder, INDEX_NAME), 'wb') as f:
