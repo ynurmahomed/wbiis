@@ -2,6 +2,10 @@ import cv2
 import numpy as np
 import pywt
 
+BLUE_YELLOW = 2
+RED_GREEN = 1
+WHITE_BLACK = 0
+
 
 def get_wavelet_features(img, wavelet, level):
     """
@@ -9,13 +13,13 @@ def get_wavelet_features(img, wavelet, level):
     :param img: Source image
     :param wavelet: Wavelet type
     :param level: Decomposition level
-    :return: 4-tuple with features and processing time
+    :return: 3-tuple with features
     """
     im_array = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
 
-    c1 = im_array[:, :, 1]
-    c2 = im_array[:, :, 2]
-    c3 = im_array[:, :, 0]
+    c1 = im_array[:, :, WHITE_BLACK]
+    c2 = im_array[:, :, RED_GREEN]
+    c3 = im_array[:, :, BLUE_YELLOW]
 
     coeffs_c1 = pywt.wavedec2(c1, wavelet, level=level)
     coeffs_c2 = pywt.wavedec2(c2, wavelet, level=level)
