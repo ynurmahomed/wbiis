@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import pywt
+import warnings
 
 BLUE_YELLOW = 2
 RED_GREEN = 1
@@ -21,9 +22,9 @@ def get_wavelet_features(img, wavelet, level):
     c2 = im_array[:, :, RED_GREEN]
     c3 = im_array[:, :, BLUE_YELLOW]
 
-    coeffs_c1 = pywt.wavedec2(c1, wavelet, level=level)
-    coeffs_c2 = pywt.wavedec2(c2, wavelet, level=level)
-    coeffs_c3 = pywt.wavedec2(c3, wavelet, level=level)
+    coeffs_c1 = wavedec2(c1, wavelet, level)
+    coeffs_c2 = wavedec2(c2, wavelet, level)
+    coeffs_c3 = wavedec2(c3, wavelet, level)
 
     w_c1 = coeffs_c1[:2]
     w_c2 = coeffs_c2[:2]
@@ -34,9 +35,9 @@ def get_wavelet_features(img, wavelet, level):
     sigma_c3 = np.std(coeffs_c3[0])
 
     level += 1
-    l5_coeffs_c1 = pywt.wavedec2(c1, wavelet, level=level)
-    l5_coeffs_c2 = pywt.wavedec2(c2, wavelet, level=level)
-    l5_coeffs_c3 = pywt.wavedec2(c3, wavelet, level=level)
+    l5_coeffs_c1 = wavedec2(c1, wavelet, level)
+    l5_coeffs_c2 = wavedec2(c2, wavelet, level)
+    l5_coeffs_c3 = wavedec2(c3, wavelet, level)
     l5_w_c1 = l5_coeffs_c1[:2]
     l5_w_c2 = l5_coeffs_c2[:2]
     l5_w_c3 = l5_coeffs_c3[:2]
@@ -46,6 +47,12 @@ def get_wavelet_features(img, wavelet, level):
     l5_w_c = [l5_w_c1, l5_w_c2, l5_w_c3]
 
     return w_c.copy(), sigma_c.copy(), l5_w_c.copy()
+
+
+def wavedec2(data, wavelet, level):
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        return pywt.wavedec2(data, wavelet, level=level)
 
 
 def _show_wavelet_image(coeffs, level):
