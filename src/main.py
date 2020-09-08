@@ -1,9 +1,9 @@
 import argparse
-import sys
-
 import cv2
 import os
 import pickle
+import sys
+import time
 
 from wbiis.constants import HEIGHT, INDEX_NAME, LEVEL, THUMBS_FOLDER, WAVELET, WIDTH
 from wbiis.preprocess import preprocess_images, build_index
@@ -50,9 +50,14 @@ def search(args):
     if img is None:
         raise ValueError('{0} is not an image'.format(args.query))
 
+    start = time.process_time()
     results = idx.search(img, n_results)
+    end = time.process_time()
+
     for i, (d, e) in enumerate(results):
-        print('{0} {1} {2:.2f}'.format(i+1, e.path, d))
+        print('{0} {1} {2:.2f}'.format(i + 1, e.path, d))
+    print("{0:.2f}s".format(end - start))
+
 
 
 if __name__ == '__main__':
