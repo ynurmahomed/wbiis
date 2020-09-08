@@ -33,8 +33,6 @@ def index(args):
     build_index(os.path.join(img_folder, THUMBS_FOLDER), WAVELET, LEVEL)
 
 
-# TODO:  If an image in the database differs from the querying image too much
-#  when we compare the 8x8x3=192 dimensional feature vector, we discard it
 def search(args):
     n_results = args.n_results
 

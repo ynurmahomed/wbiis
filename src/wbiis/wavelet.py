@@ -3,10 +3,6 @@ import numpy as np
 import pywt
 import warnings
 
-BLUE_YELLOW = 2
-RED_GREEN = 1
-WHITE_BLACK = 0
-
 
 def get_wavelet_features(img, wavelet, level):
     """
@@ -16,43 +12,18 @@ def get_wavelet_features(img, wavelet, level):
     :param level: Decomposition level
     :return: 3-tuple with features
     """
-    im_array = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
-
-    c1 = im_array[:, :, WHITE_BLACK]
-    c2 = im_array[:, :, RED_GREEN]
-    c3 = im_array[:, :, BLUE_YELLOW]
-
-    coeffs_c1 = wavedec2(c1, wavelet, level)
-    coeffs_c2 = wavedec2(c2, wavelet, level)
-    coeffs_c3 = wavedec2(c3, wavelet, level)
-
-    w_c1 = coeffs_c1[:2]
-    w_c2 = coeffs_c2[:2]
-    w_c3 = coeffs_c3[:2]
-
-    sigma_c1 = np.std(coeffs_c1[0])
-    sigma_c2 = np.std(coeffs_c2[0])
-    sigma_c3 = np.std(coeffs_c3[0])
-
-    level += 1
-    l5_coeffs_c1 = wavedec2(c1, wavelet, level)
-    l5_coeffs_c2 = wavedec2(c2, wavelet, level)
-    l5_coeffs_c3 = wavedec2(c3, wavelet, level)
-    l5_w_c1 = l5_coeffs_c1[:2]
-    l5_w_c2 = l5_coeffs_c2[:2]
-    l5_w_c3 = l5_coeffs_c3[:2]
-
-    w_c = [w_c1, w_c2, w_c3]
-    sigma_c = [sigma_c1, sigma_c2, sigma_c3]
-    l5_w_c = [l5_w_c1, l5_w_c2, l5_w_c3]
-
-    return w_c.copy(), sigma_c.copy(), l5_w_c.copy()
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    WCi = _wavedecn(img, wavelet, level)
+    sigma_ci = np.std(WCi[0], axis=(0, 1))
+    l5_WCi = _wavedecn(img, wavelet, level + 1)
+    return WCi[:2].copy(), sigma_ci.copy(), l5_WCi[0].copy()
 
 
-def wavedec2(data, wavelet, level):
+def _wavedecn(data, wavelet, level):
+    # https://github.com/PyWavelets/pywt/issues/396
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        return pywt.wavedec2(data, wavelet, level=level)
+        return pywt.wavedecn(data, wavelet, level=level, axes=(0, 1))
 
 
 def _show_wavelet_image(coeffs, level):
