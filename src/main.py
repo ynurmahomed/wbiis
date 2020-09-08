@@ -7,6 +7,7 @@ import time
 
 from wbiis.constants import HEIGHT, INDEX_NAME, LEVEL, THUMBS_FOLDER, WAVELET, WIDTH
 from wbiis.preprocess import preprocess_images, build_index
+from zipfile import ZipFile
 
 
 def main():
@@ -16,14 +17,14 @@ def main():
 
     index_parser = subparsers.add_parser('index', help='index images')
     index_parser.set_defaults(func=index)
-    index_parser.add_argument('path', help='image folder to be indexed', nargs='?', default=os.getcwd())
+    index_parser.add_argument('path', help='image folder to be indexed. Defaults to cwd', nargs='?', default=os.getcwd())
 
     search_parser = subparsers.add_parser('search', help='search images')
     search_parser.set_defaults(func=search)
-    search_parser.add_argument('path', help='image folder', nargs='?', default=os.getcwd())
+    search_parser.add_argument('path', help='image folder. Defaults to cwd', nargs='?', default=os.getcwd())
     search_parser.add_argument('query', help='query image')
     search_parser.add_argument('--n-results', help='number of results to return', type=int)
-    search_parser.add_argument('--save', help='name of the output file')
+    search_parser.add_argument('--save', help='save the results', action='store_true')
 
     args = parser.parse_args()
     if 'func' not in args:
@@ -58,6 +59,18 @@ def search(args):
         print('{0} {1} {2:.2f}'.format(i + 1, e.path, d))
     print("{0:.2f}s".format(end - start))
 
+    if args.save:
+        save(args.query, results)
+
+
+def save(query, results):
+    name = os.path.basename(query).split('.')[0]
+    with ZipFile('{0}.zip'.format(name), 'w') as z:
+        for (d, e) in results:
+            arcname = os.path.basename(e.path)
+            filename = os.path.abspath(e.path)
+            z.write(filename, arcname)
+    print('Results saved in {0}.zip'.format(name))
 
 
 if __name__ == '__main__':
