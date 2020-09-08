@@ -5,8 +5,7 @@ import time
 
 from .index import Entry, Index
 from .wavelet import get_wavelet_features
-
-INDEX_NAME = '.index.pickle'
+from .constants import INDEX_NAME
 
 
 def preprocess_images(img_folder, resize_dimensions, thumbs_folder):
@@ -54,7 +53,7 @@ def build_index(folder, wavelet, level):
     print('Building index...')
     start = time.process_time()
 
-    index = Index()
+    index = Index(wavelet, level)
     for file in os.listdir(folder):
         path = os.path.join(folder, file)
 
