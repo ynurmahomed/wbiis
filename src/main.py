@@ -1,4 +1,6 @@
 import argparse
+import sys
+
 import cv2
 import os
 import pickle
@@ -24,6 +26,10 @@ def main():
     search_parser.add_argument('--save', help='name of the output file')
 
     args = parser.parse_args()
+    if 'func' not in args:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+
     args.func(args)
 
 
