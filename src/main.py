@@ -39,7 +39,7 @@ def main():
 
 def index(args):
     img_folder = args.path
-    preprocess_images(img_folder, (HEIGHT, WIDTH), THUMBS_FOLDER)
+    preprocess_images(img_folder, (WIDTH, HEIGHT), THUMBS_FOLDER)
     return build_index(os.path.join(img_folder, THUMBS_FOLDER), WAVELET, LEVEL)
 
 
@@ -97,7 +97,9 @@ def show(query_img, results):
     to_show = [cv2.imread(e.path) for _, e in results[:n_results]]
     g = gallery(np.array(to_show + fill), ncols=GALLERY_COLUMNS)
     cv2.imshow('Query image', query_img)
+    cv2.moveWindow('Query image', 0, 0)
     cv2.imshow('Results', g)
+    cv2.moveWindow('Results', 400, 0)
     cv2.waitKey(0)
 
 
