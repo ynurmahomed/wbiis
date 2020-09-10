@@ -17,7 +17,8 @@ def main():
 
     index_parser = subparsers.add_parser('index', help='index images')
     index_parser.set_defaults(func=index)
-    index_parser.add_argument('path', help='image folder to be indexed. Defaults to cwd', nargs='?', default=os.getcwd())
+    index_parser.add_argument('path', help='image folder to be indexed. Defaults to cwd', nargs='?',
+                              default=os.getcwd())
 
     search_parser = subparsers.add_parser('search', help='search images')
     search_parser.set_defaults(func=search)
@@ -43,10 +44,12 @@ def index(args):
 def search(args):
     n_results = args.n_results
 
+    # TODO prompt to build the index if not present
     index_file = os.path.join(args.path, THUMBS_FOLDER, INDEX_NAME)
     with open(index_file, 'rb') as f:
         idx = pickle.load(f)
 
+    # TODO resize image if bigger than 128x128
     img = cv2.imread(args.query)
     if img is None:
         raise ValueError('{0} is not an image'.format(args.query))
