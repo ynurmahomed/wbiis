@@ -38,10 +38,6 @@ def preprocess_images(img_folder, resize_dimensions, thumbs_folder):
     print("{0:.2f}s".format(end - start))
 
 
-def ignore(path):
-    return os.path.isdir(path) or os.path.basename(path).startswith('.')
-
-
 def build_index(folder, wavelet, level):
     """
     Builds the index from wavelet features and saves to disk
@@ -71,6 +67,12 @@ def build_index(folder, wavelet, level):
 
     end = time.process_time()
     print("{0:.2f}s".format(end - start))
+
+    return index
+
+
+def ignore(path):
+    return os.path.isdir(path) or os.path.basename(path).startswith('.')
 
 
 def create_thumbnails_folder(img_folder, thumbs_folder):

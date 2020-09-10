@@ -40,16 +40,22 @@ def main():
 def index(args):
     img_folder = args.path
     preprocess_images(img_folder, (HEIGHT, WIDTH), THUMBS_FOLDER)
-    build_index(os.path.join(img_folder, THUMBS_FOLDER), WAVELET, LEVEL)
+    return build_index(os.path.join(img_folder, THUMBS_FOLDER), WAVELET, LEVEL)
 
 
 def search(args):
     n_results = args.n_results
 
-    # TODO prompt to build the index if not present
-    index_file = os.path.join(args.path, THUMBS_FOLDER, INDEX_NAME)
-    with open(index_file, 'rb') as f:
-        idx = pickle.load(f)
+    try:
+        index_file = os.path.join(args.path, THUMBS_FOLDER, INDEX_NAME)
+        with open(index_file, 'rb') as f:
+            idx = pickle.load(f)
+    except FileNotFoundError:
+        build = input('Index not found. Build now ([y]/n)?: ')
+        if build == 'n':
+            exit(0)
+        else:
+            idx = index(args)
 
     dim = (WIDTH, HEIGHT)
     img = cv2.imread(args.query)
