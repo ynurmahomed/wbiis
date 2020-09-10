@@ -51,10 +51,12 @@ def search(args):
     with open(index_file, 'rb') as f:
         idx = pickle.load(f)
 
-    # TODO resize image if bigger than 128x128
+    dim = (WIDTH, HEIGHT)
     img = cv2.imread(args.query)
     if img is None:
         raise ValueError('{0} is not an image'.format(args.query))
+    if not img.shape[:2] == dim:
+        img = cv2.resize(img, dim)
 
     start = time.process_time()
     results = idx.search(img, n_results)
