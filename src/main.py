@@ -1,11 +1,12 @@
 import argparse
 import cv2
+import numpy as np
 import os
 import pickle
 import sys
 import time
 
-from wbiis.constants import HEIGHT, INDEX_NAME, LEVEL, THUMBS_FOLDER, WAVELET, WIDTH
+from wbiis.constants import GALLERY_COLUMNS, HEIGHT, INDEX_NAME, LEVEL, SHOW_IMG_MAX, THUMBS_FOLDER, WAVELET, WIDTH
 from wbiis.preprocess import preprocess_images, build_index
 from zipfile import ZipFile
 
@@ -26,6 +27,7 @@ def main():
     search_parser.add_argument('query', help='query image')
     search_parser.add_argument('--n-results', help='number of results to return', type=int)
     search_parser.add_argument('--save', help='save the results', action='store_true')
+    search_parser.add_argument('--show', help='display the query image and results', action='store_true')
 
     args = parser.parse_args()
     if 'func' not in args:
@@ -65,6 +67,9 @@ def search(args):
     if args.save:
         save(args.query, results)
 
+    if args.show:
+        show(img, results)
+
 
 def save(query, results):
     name = os.path.basename(query).split('.')[0]
@@ -74,6 +79,28 @@ def save(query, results):
             filename = os.path.abspath(e.path)
             z.write(filename, arcname)
     print('Results saved in {0}.zip'.format(name))
+
+
+def show(query_img, results):
+    opencv_bg = 50
+    n_results = len(results) if len(results) <= SHOW_IMG_MAX else SHOW_IMG_MAX
+    remain = ((((n_results // GALLERY_COLUMNS) + 1) * GALLERY_COLUMNS) - n_results) % GALLERY_COLUMNS
+    fill = [np.full(query_img.shape, opencv_bg, dtype=np.uint8) for _ in range(remain)]
+    to_show = [cv2.imread(e.path) for _, e in results[:n_results]]
+    g = gallery(np.array(to_show + fill), ncols=GALLERY_COLUMNS)
+    cv2.imshow('Query image', query_img)
+    cv2.imshow('Results', g)
+    cv2.waitKey(0)
+
+
+def gallery(array, ncols=3):
+    nindex, height, width, intensity = array.shape
+    nrows = nindex // ncols
+    assert nindex == nrows * ncols
+    result = (array.reshape(nrows, ncols, height, width, intensity)
+              .swapaxes(1, 2)
+              .reshape(height * nrows, width * ncols, intensity))
+    return result
 
 
 if __name__ == '__main__':
