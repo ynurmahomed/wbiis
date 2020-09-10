@@ -56,6 +56,7 @@ def build_index(folder, wavelet, level):
     index = Index(wavelet, level)
     for file in os.listdir(folder):
         path = os.path.join(folder, file)
+        path = os.path.abspath(path)
 
         if ignore(path):
             continue
