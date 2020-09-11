@@ -1,6 +1,6 @@
 import numpy as np
 
-from .constants import BETA, W11, W12, W21, W22, WC1, WC2, WC3
+from .constants import BETA, W11, W12, W21, W22, WC1, WC2, WC3, L5_FACTOR
 from .wavelet import get_wavelet_features
 
 """
@@ -26,13 +26,14 @@ class Index:
         self.entries = entries
 
     def search(self, img, n_results):
-        # TODO:  If an image in the database differs from the querying image too much
-        #  when we compare the 8x8x3=192 dimensional feature vector, we discard it
         results = []
         WCi, sigma_ci, l5_WCi = get_wavelet_features(img, self.wavelet, self.level)
         for e in self.entries:
             if acceptance(e.sigma_ci, sigma_ci):
-                results.append((dist(e.WCi, WCi), e))
+                if euclidean(min_max(e.l5_WCi), min_max(l5_WCi)) > L5_FACTOR:
+                    continue
+                else:
+                    results.append((dist(e.WCi, WCi), e))
 
         return sorted(results, key=lambda r: r[0])[:n_results]
 
@@ -90,11 +91,17 @@ def dist(idx_WCi, WCi):
     idx_W22 = idx_WCi[1]['dd']
     WC22 = WCi[1]['dd']
 
-    return W11 * np.sum(wci * norm(WC11 - idx_W11)) \
-           + W12 * np.sum(wci * norm(WC12 - idx_W12)) \
-           + W21 * np.sum(wci * norm(WC21 - idx_W21)) \
-           + W22 * np.sum(wci * norm(WC22 - idx_W22))
+    return W11 * np.sum(wci * euclidean(WC11, idx_W11)) \
+           + W12 * np.sum(wci * euclidean(WC12, idx_W12)) \
+           + W21 * np.sum(wci * euclidean(WC21, idx_W21)) \
+           + W22 * np.sum(wci * euclidean(WC22, idx_W22))
 
 
-def norm(arr):
-    return np.linalg.norm(arr, axis=(0, 1))
+def min_max(arr):
+    mn = np.min(arr)
+    mx = np.max(arr)
+    return (arr - mn) * (1.0 / (mx - mn))
+
+
+def euclidean(a, b):
+    return np.sqrt(np.sum((a-b)**2))
