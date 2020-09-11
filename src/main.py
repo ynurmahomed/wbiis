@@ -8,6 +8,7 @@ import time
 
 from wbiis.constants import GALLERY_COLUMNS, HEIGHT, INDEX_NAME, LEVEL, SHOW_IMG_MAX, THUMBS_FOLDER, WAVELET, WIDTH
 from wbiis.preprocess import preprocess_images, build_index
+from wbiis.holidays import print_inline, print_scores
 from zipfile import ZipFile
 
 
@@ -28,6 +29,10 @@ def main():
     search_parser.add_argument('--n-results', help='number of results to return', type=int)
     search_parser.add_argument('--save', help='save the results', action='store_true')
     search_parser.add_argument('--show', help='display the query image and results', action='store_true')
+    search_parser.add_argument('--inline', help='print results in a single line', action='store_true')
+    search_parser.add_argument('--scores',
+                               help='print scores (true/false positive rates, precision, recall and accuracy)',
+                               action='store_true')
 
     args = parser.parse_args()
     if 'func' not in args:
@@ -73,15 +78,25 @@ def search(args):
     results = idx.search(img, n_results)
     end = time.process_time()
 
-    for i, (d, e) in enumerate(results):
-        print('{0} {1} {2:.2f}'.format(i + 1, e.path, d))
-    print("{0:.2f}s".format(end - start))
+    if args.inline:
+        print_inline(results)
+    else:
+        print_expanded(end, results, start)
+
+    if args.scores:
+        print_scores(args.path, args.query, results)
 
     if args.save:
         save(args.query, results)
 
     if args.show:
         show(img, results)
+
+
+def print_expanded(end, results, start):
+    for i, (d, e) in enumerate(results):
+        print('{0} {1} {2:.2f}'.format(i + 1, e.path, d))
+    print("{0:.2f}s".format(end - start))
 
 
 def save(query, results):
