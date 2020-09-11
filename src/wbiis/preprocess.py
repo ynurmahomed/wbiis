@@ -29,6 +29,8 @@ def preprocess_images(img_folder, resize_dimensions, thumbs_folder):
             continue
 
         img = cv2.imread(path)
+        if img is None:
+            raise ValueError('Error: Folder should consist of only image files. Please remove {0}'.format(path))
         img = cv2.resize(img, resize_dimensions)
 
         out = os.path.join(img_folder, thumbs_folder, file)

@@ -38,9 +38,13 @@ def main():
 
 
 def index(args):
-    img_folder = args.path
-    preprocess_images(img_folder, (WIDTH, HEIGHT), THUMBS_FOLDER)
-    return build_index(os.path.join(img_folder, THUMBS_FOLDER), WAVELET, LEVEL)
+    try:
+        img_folder = args.path
+        preprocess_images(img_folder, (WIDTH, HEIGHT), THUMBS_FOLDER)
+        return build_index(os.path.join(img_folder, THUMBS_FOLDER), WAVELET, LEVEL)
+    except ValueError as e:
+        print(e)
+        exit(1)
 
 
 def search(args):
@@ -60,7 +64,8 @@ def search(args):
     dim = (WIDTH, HEIGHT)
     img = cv2.imread(args.query)
     if img is None:
-        raise ValueError('{0} is not an image'.format(args.query))
+        print('Error: {0} is not an image'.format(args.query))
+        exit(1)
     if not img.shape[:2] == dim:
         img = cv2.resize(img, dim)
 
