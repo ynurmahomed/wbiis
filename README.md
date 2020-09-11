@@ -5,7 +5,7 @@ James Ze Wang, Gio Wiederhold, Oscar Firschein, and Sha Xin Wei, 1998.
 
 Dataset
 =======
-# The images can be downloaded from [INRIA Holidays dataset](http://lear.inrialpes.fr/people/jegou/data.php).
+The images can be downloaded from [INRIA Holidays dataset](http://lear.inrialpes.fr/people/jegou/data.php).
 
 Usage
 =====
