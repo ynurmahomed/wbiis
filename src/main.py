@@ -29,6 +29,7 @@ def main():
     search_parser.add_argument('--n-results', help='number of results to return', type=int)
     search_parser.add_argument('--save', help='save the results', action='store_true')
     search_parser.add_argument('--show', help='display the query image and results', action='store_true')
+    search_parser.add_argument('--quiet', help='don\'t print results', action='store_true')
     search_parser.add_argument('--inline', help='print results in a single line', action='store_true')
     search_parser.add_argument('--scores',
                                help='print scores (true/false positive rates, precision, recall and accuracy)',
@@ -78,10 +79,11 @@ def search(args):
     results = idx.search(img, n_results)
     end = time.process_time()
 
-    if args.inline:
-        print_inline(results)
-    else:
-        print_expanded(end, results, start)
+    if not args.quiet:
+        if args.inline:
+            print_inline(results)
+        else:
+            print_expanded(end, results, start)
 
     if args.scores:
         print_scores(args.path, args.query, results)
