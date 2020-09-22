@@ -13,6 +13,7 @@ def print_scores(path, query, results):
     :param results: Query results
     :return: None
     """
+
     def fname(f):
         base = os.path.basename(f)
         return os.path.splitext(base)[0]
@@ -31,7 +32,8 @@ def print_scores(path, query, results):
     precision = 0 if (tp + fp) == 0 else tp / (tp + fp)
     accuracy = (tp + tn) / (p + n)
 
-    print('TP {0} FP {1} Precision {2:.2f} Recall {3:.2f} Accuracy {4:.2f}'.format(tp, fp, precision, recall, accuracy))
+    print('{5} TP {0} FP {1} Precision {2:.2f} Recall {3:.2f} Accuracy {4:.2f}'.format(tp, fp, precision, recall,
+                                                                                       accuracy, fname(query)))
 
 
 def print_inline(results):
