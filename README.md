@@ -3,6 +3,8 @@ CBIR with Wavelet features
 Implementation of the content based image retrieval algorithm described in
 James Ze Wang, Gio Wiederhold, Oscar Firschein, and Sha Xin Wei, 1998.
 
+![Screenshot](screenshot.png)
+
 Dataset
 =======
 The images can be downloaded from [INRIA Holidays dataset](http://lear.inrialpes.fr/people/jegou/data.php).
